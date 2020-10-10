@@ -1,14 +1,16 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
-#include"Play.h"
 #include<iostream>
 #include <graphics.h>
 #include<vector>
 #include<Windows.h>
 #include <conio.h>
+#include<time.h>
+
+#include"Play.h"
 #include"Map.h"
 #include"Plant.h"
 #include"Bullet.h"
-#include<time.h>
+#include"Zombie.h"
 
 int score = 0;
 int sunshine = 225;
@@ -115,8 +117,10 @@ int control() {
 	//char input;
 	//input = _getch();
 	start = clock();
+	int i = 0;
 	while (!gameover) {
-
+		Sleep(50);
+		i++;
 		if (GetAsyncKeyState('B') & 0x8000)
 		{
 			Plant tmp(buy_plant());
@@ -130,7 +134,30 @@ int control() {
 			return 0;
 		}
 
-
+		if (i % 20 == 0) {
+			sunshine += 25;
+		}
+		if (i % 6 == 0) {
+			for (int i = 0; i < Peashooter.size(); i++) {
+				if (Peashooter[i].get_life() == 0) {
+					Peashooter.erase(Peashooter.begin() + i, Peashooter.begin() + i + 1);
+					continue;
+				}
+				Bullet tmp(Peashooter[i].get_speed(), Peashooter[i].get_attack(), Peashooter[i].get_loc_x() + 1, Peashooter[i].get_loc_y());
+				bullet.push_back(tmp);
+			}
+		}
+		if (i % 2 == 0) {
+			for (int i = 0; i < bullet.size(); i++) {
+				if (bullet[i].get_loc_x() == 7 && bullet[i].get_loc() == 4) {
+					bullet.erase(bullet.begin() + i, bullet.begin() + i + 1);
+					continue;
+				}
+				Map::change_map(bullet[i].get_loc_x(), bullet[i].get_loc_y(), bullet[i].get_loc() + 10);
+				bullet[i].change_loc();
+			}
+		}
+		print_game_ui();
 	}
 	return 0;
 }
@@ -141,7 +168,11 @@ Plant buy_plant() {
 
 	//char input;
 	//input = _getch();
+	int j = 0;
 	while (true) {
+		Sleep(50);
+		j++;
+
 		if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
 			Plant tmp;
 			return tmp;
@@ -223,14 +254,17 @@ Plant buy_plant() {
 							bullet.push_back(tmp);
 						}
 					}
-					for (int i = 0; i < bullet.size(); i++) {
-						if (bullet[i].get_loc_x() == 7 && bullet[i].get_loc() == 4) {
-							bullet.erase(bullet.begin() + i, bullet.begin() + i + 1);
-							continue;
+					if (i % 2 == 0) {
+						for (int i = 0; i < bullet.size(); i++) {
+							if (bullet[i].get_loc_x() == 7 && bullet[i].get_loc() == 4) {
+								bullet.erase(bullet.begin() + i, bullet.begin() + i + 1);
+								continue;
+							}
+							Map::change_map(bullet[i].get_loc_x(), bullet[i].get_loc_y(), bullet[i].get_loc() + 10);
+							bullet[i].change_loc();
 						}
-						Map::change_map(bullet[i].get_loc_x(), bullet[i].get_loc_y(), bullet[i].get_loc() + 10);
-						bullet[i].change_loc();
 					}
+
 					print_buy_ui();
 					cout << "按“↑”、“↓”、“←”、“→”来控制想要栽种的位置" << endl;
 
@@ -238,11 +272,36 @@ Plant buy_plant() {
 				else break;
 
 			}
+
 			Map::change_map(x, y, 3);
 			tmp.place_plant(x, y);
 			plant[y][x] = 1;
 			sunshine -= tmp.get_price();
 			return tmp;
 		}
+		if (j % 20 == 0) {
+			sunshine += 25;
+		}
+		if (j % 6 == 0) {
+			for (int i = 0; i < Peashooter.size(); i++) {
+				if (Peashooter[i].get_life() == 0) {
+					Peashooter.erase(Peashooter.begin() + i, Peashooter.begin() + i + 1);
+					continue;
+				}
+				Bullet tmp(Peashooter[i].get_speed(), Peashooter[i].get_attack(), Peashooter[i].get_loc_x() + 1, Peashooter[i].get_loc_y());
+				bullet.push_back(tmp);
+			}
+		}
+		if (j % 2 == 0) {
+			for (int i = 0; i < bullet.size(); i++) {
+				if (bullet[i].get_loc_x() == 7 && bullet[i].get_loc() == 4) {
+					bullet.erase(bullet.begin() + i, bullet.begin() + i + 1);
+					continue;
+				}
+				Map::change_map(bullet[i].get_loc_x(), bullet[i].get_loc_y(), bullet[i].get_loc() + 10);
+				bullet[i].change_loc();
+			}
+		}
+		print_buy_ui();
 	}
 }
