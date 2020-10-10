@@ -1,5 +1,6 @@
 #include"Map.h"
 #include<iostream>
+#define _CRT_SECURE_NO_WARNINGS
 
 using namespace std;
 
@@ -48,6 +49,54 @@ void Map::change_map(int x, int y, int item) {
 		map[3 * y + 2][x * 6 + 3] = -1;
 		map[3 * y + 2][x * 6 + 4] = -1;
 
+	}
+	else if (item == 11) {
+		for (int i = 3 * y; i < 3 * y + 3; i++) {
+			map[i][x * 6] = 1;
+			map[i][x * 6 + 5] = 1;
+			//map[i][x * 6 + 1] = 0;
+			//map[i][x * 6 + 2] = 0;
+			//map[i][x * 6 + 3] = 0;
+			//map[i][x * 6 + 4] = 0;
+		}
+		if (x > 0)map[3 * y][x * 6 - 2] = 0;
+		map[3 * y][x * 6 + 1] = 10;
+	}
+	else if (item == 12) {
+		for (int i = 3 * y; i < 3 * y + 3; i++) {
+			map[i][x * 6] = 1;
+			map[i][x * 6 + 5] = 1;
+			//map[i][x * 6 + 1] = 0;
+			//map[i][x * 6 + 2] = 0;
+			//map[i][x * 6 + 3] = 0;
+			//map[i][x * 6 + 4] = 0;
+		}
+		if (x > 0)map[3 * y][x * 6 + 1] = 0;
+		map[3 * y][x * 6 + 2] = 10;
+	}
+	else if (item == 13) {
+		for (int i = 3 * y; i < 3 * y + 3; i++) {
+			map[i][x * 6] = 1;
+			map[i][x * 6 + 5] = 1;
+			//map[i][x * 6 + 1] = 0;
+			//map[i][x * 6 + 2] = 0;
+			//map[i][x * 6 + 3] = 0;
+			//map[i][x * 6 + 4] = 0;
+		}
+		if (x > 0)map[3 * y][x * 6 + 2] = 0;
+		map[3 * y][x * 6 + 3] = 10;
+	}
+	else if (item == 14) {
+		for (int i = 3 * y; i < 3 * y + 3; i++) {
+			map[i][x * 6] = 1;
+			map[i][x * 6 + 5] = 1;
+			//map[i][x * 6 + 1] = 0;
+			//map[i][x * 6 + 2] = 0;
+			//map[i][x * 6 + 3] = 0;
+			//map[i][x * 6 + 4] = 0;
+		}
+		if (x > 0)map[3 * y][x * 6 + 3] = 0;
+		map[3 * y][x * 6 + 4] = 10;
 	}
 }
 

@@ -1,4 +1,5 @@
-﻿#include"Play.h"
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include"Play.h"
 #include<iostream>
 #include <graphics.h>
 #include<vector>
@@ -6,11 +7,22 @@
 #include <conio.h>
 #include"Map.h"
 #include"Plant.h"
+#include"Bullet.h"
+#include<time.h>
 
 int score = 0;
 int sunshine = 225;
 bool gameover = 0;
+//有植物：plant[i][j] = 1
+//有僵尸：plant[i][j] = 2
+//有子弹：plant[i][j] = 3, plant[i][j] = 4, plant[i][j] = 5, plant[i][j] = 6
 int plant[3][8] = { 0 };
+double start;
+
+vector <Plant> Peashooter;
+vector <Bullet> bullet;
+
+
 
 void print_begin_surface() {
 	initgraph(640, 480);
@@ -32,7 +44,7 @@ void print_play_ui() {
 			if (map[i][j] == 1)cout << "\033[32m# \033[0m";
 			if (map[i][j] == 2)cout << "\033[31m# \033[0m";
 			if (map[i][j] == 3)cout << "豌豆射手";
-
+			if (map[i][j] == 10)cout << "·";
 		}
 		cout << endl;
 	}
@@ -43,6 +55,8 @@ void print_play_ui() {
 			if (map[i][j] == 1)cout << "\033[32m# \033[0m";
 			if (map[i][j] == 2)cout << "\033[31m# \033[0m";
 			if (map[i][j] == 3)cout << "豌豆射手";
+			if (map[i][j] == 10)cout << "·";
+
 
 		}
 		cout << endl;
@@ -54,6 +68,8 @@ void print_play_ui() {
 			if (map[i][j] == 1)cout << "\033[32m# \033[0m";
 			if (map[i][j] == 2)cout << "\033[31m# \033[0m";
 			if (map[i][j] == 3)cout << "豌豆射手";
+			if (map[i][j] == 10)cout << "·";
+
 
 		}
 		cout << endl;
@@ -87,12 +103,20 @@ void print_buy_ui() {
 }
 
 
+double count_time() {
+	double res = clock() - start;
+	//start = clock();
+	return res;
+}
+
 int control() {
 	print_game_ui();
-	vector <Plant> Peashooter;
+
 	//char input;
 	//input = _getch();
+	start = clock();
 	while (!gameover) {
+
 		if (GetAsyncKeyState('B') & 0x8000)
 		{
 			Plant tmp(buy_plant());
@@ -102,6 +126,7 @@ int control() {
 		if (GetAsyncKeyState('Q') & 0x8000)
 		{
 			system("cls");
+			cout << "You have quitted the game!" << endl;
 			return 0;
 		}
 
@@ -111,7 +136,7 @@ int control() {
 }
 
 Plant buy_plant() {
-	
+
 	print_buy_ui();
 
 	//char input;
@@ -122,7 +147,9 @@ Plant buy_plant() {
 			return tmp;
 		}
 		else if (GetAsyncKeyState(VK_RETURN) & 0x8000) {
-			Plant tmp("Peashooter", 100, 20);
+			char* tmp_char = new char[100];
+			strcpy(tmp_char, "Peashooter");
+			Plant tmp(tmp_char, 100, 20, 10, 100);
 			int x = 0;
 			int y = 0;
 			Map::change_map(x, y, 2);
@@ -130,69 +157,91 @@ Plant buy_plant() {
 			print_buy_ui();
 			cout << "按“↑”、“↓”、“←”、“→”来控制想要栽种的位置" << endl;
 			Sleep(200);
-			//while (true) {
-			//int i = 0;
-			while (!(GetAsyncKeyState(VK_RETURN) & 0x8000) || plant[y][x] != 0) {
-				//Sleep(50);
-				//i++;
-				if (GetAsyncKeyState(VK_UP) & 0x8000) {
-					Sleep(100);
-					if (y == 0) continue;
-					else {
-						Map::change_map(x, y, 1);
-						y--;
-						Map::change_map(x, y, 2);
-					}
-				}
-				else if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
-					Sleep(100);
-					if (y == 2)continue;
-					else {
-						Map::change_map(x, y, 1);
-						y++;
-						Map::change_map(x, y, 2);
-					}
-				}
-				else if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
-					Sleep(100);
-					if (x == 0 && y == 0)continue;
-					else if (x == 0 && y > 0) {
-						Map::change_map(x, y, 1);
-						x = 7;
-						y--;
-						Map::change_map(x, y, 2);
-					}
-					else {
-						Map::change_map(x, y, 1);
-						x--;
-						Map::change_map(x, y, 2);
-					}
-				}
-				else if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
-					Sleep(100);
-					if (x == 7 && y == 2)continue;
-					else if (x == 7) {
-						Map::change_map(x, y, 1);
-						x = 0;
-						y++;
-						Map::change_map(x, y, 2);
-					}
-					else {
-						Map::change_map(x, y, 1);
-						x++;
-						Map::change_map(x, y, 2);
-					}
-				}
 
-				print_buy_ui();
-				cout << "按“↑”、“↓”、“←”、“→”来控制想要栽种的位置" << endl;
+			int i = 0;
+			while (true) {
 
+				if (!(GetAsyncKeyState(VK_RETURN) & 0x8000) || plant[y][x] == 1) {
+					Sleep(100);
+					i++;
+
+					if (GetAsyncKeyState(VK_UP) & 0x8000) {
+						if (y == 0) continue;
+						else {
+							Map::change_map(x, y, 1);
+							y--;
+							Map::change_map(x, y, 2);
+						}
+					}
+					else if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
+						if (y == 2)continue;
+						else {
+							Map::change_map(x, y, 1);
+							y++;
+							Map::change_map(x, y, 2);
+						}
+					}
+					else if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
+						if (x == 0 && y == 0)continue;
+						else if (x == 0 && y > 0) {
+							Map::change_map(x, y, 1);
+							x = 7;
+							y--;
+							Map::change_map(x, y, 2);
+						}
+						else {
+							Map::change_map(x, y, 1);
+							x--;
+							Map::change_map(x, y, 2);
+						}
+					}
+					else if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
+						if (x == 7 && y == 2)continue;
+						else if (x == 7) {
+							Map::change_map(x, y, 1);
+							x = 0;
+							y++;
+							Map::change_map(x, y, 2);
+						}
+						else {
+							Map::change_map(x, y, 1);
+							x++;
+							Map::change_map(x, y, 2);
+						}
+					}
+
+					if (i % 10 == 0) {
+						sunshine += 25;
+					}
+					if (i % 3 == 0) {
+						for (int i = 0; i < Peashooter.size(); i++) {
+							if (Peashooter[i].get_life() == 0) {
+								Peashooter.erase(Peashooter.begin() + i, Peashooter.begin() + i + 1);
+								continue;
+							}
+							Bullet tmp(Peashooter[i].get_speed(), Peashooter[i].get_attack(), Peashooter[i].get_loc_x()+1, Peashooter[i].get_loc_y());
+							bullet.push_back(tmp);
+						}
+					}
+					for (int i = 0; i < bullet.size(); i++) {
+						if (bullet[i].get_loc_x() == 7 && bullet[i].get_loc() == 4) {
+							bullet.erase(bullet.begin() + i, bullet.begin() + i + 1);
+							continue;
+						}
+						Map::change_map(bullet[i].get_loc_x(), bullet[i].get_loc_y(), bullet[i].get_loc() + 10);
+						bullet[i].change_loc();
+					}
+					print_buy_ui();
+					cout << "按“↑”、“↓”、“←”、“→”来控制想要栽种的位置" << endl;
+
+				}
+				else break;
 
 			}
-			//}
-				Map::change_map(x, y, 3);
-				tmp.place_plant(x, y);
-				plant[y][x] = 1;
+			Map::change_map(x, y, 3);
+			tmp.place_plant(x, y);
+			plant[y][x] = 1;
+			sunshine -= tmp.get_price();
 			return tmp;
 		}
 	}

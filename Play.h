@@ -1,4 +1,6 @@
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
+
 #include<iostream>
 #include <easyx.h>			// 引用图形库头文件
 #include <conio.h>
@@ -18,6 +20,6 @@ void print_buy_ui();
 
 int control();
 
-
+double count_time();
 
 Plant buy_plant();

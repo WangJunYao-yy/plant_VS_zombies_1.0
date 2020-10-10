@@ -1,9 +1,10 @@
 #include"Plant.h"
 #include<iostream>
+#define _CRT_SECURE_NO_WARNINGS
 
 using namespace std;
 
-Plant::Plant(const char* name_, const int blood_, const int attack_) :blood(blood_), attack(attack_), life(blood_) {
+Plant::Plant(char* name_, const int blood_, const int attack_, const int speed_, const int price_) : attack(attack_), life(blood_), speed(speed_), price(price_) {
 	this->name = new char;
 	this->name = name_;
 	x = -1;
@@ -27,16 +28,32 @@ void Plant::place_plant(int x_, int y_) {
 	y = y_;
 }
 
-Plant::Plant(const Plant* orig) :blood(orig->blood), attack(orig->attack), life(orig->blood) {
+Plant::Plant(const Plant* orig) : attack(orig->attack), life(orig->life), speed(orig->speed), price(orig->price) {
 	this->name = new char;
 	this->name = orig->name;
 	this->x = orig->x;
 	this->y = orig->y;
 }
 
-Plant::Plant() :blood(0), attack(0), life(-1) {
+Plant::Plant() : attack(0), life(0), speed(0), price(0) {
 	this->name = new char;
 	//this->name = name_;
 	x = -1;
 	y = -1;
+}
+
+int Plant::get_price() {
+	return price;
+}
+
+int Plant::get_speed() {
+	return speed;
+}
+
+int Plant::get_loc_x() {
+	return x;
+}
+
+int Plant::get_loc_y() {
+	return y;
 }
