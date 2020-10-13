@@ -18,6 +18,8 @@ void print_game_ui();
 
 void print_buy_ui();
 
+void move_zombies(); 
+
 int control();
 
 double count_time();

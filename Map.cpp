@@ -50,11 +50,7 @@ void Map::change_map(int x, int y, int item) {
 		map[3 * y + 2][x * 6 + 4] = -1;
 
 	}
-	else if (item == 11) {
-		if (x > 0)map[3 * y][x * 6 - 2] = 0;
-		map[3 * y][x * 6 + 1] = 10;
-	}
-	else if (item == 12) {
+ 	else if (item == 12) {
 		if (x > 0)map[3 * y][x * 6 + 1] = 0;
 		map[3 * y][x * 6 + 2] = 10;
 	}
@@ -65,6 +61,24 @@ void Map::change_map(int x, int y, int item) {
 	else if (item == 14) {
 		if (x > 0)map[3 * y][x * 6 + 3] = 0;
 		map[3 * y][x * 6 + 4] = 10;
+	}
+	else if (item == 20) {
+		if (x < 7) {
+			map[3 * y + 1][x * 6 + 1] = 20;
+			map[3 * y + 1][x * 6 + 2] = -1;
+			map[3 * y + 1][x * 6 + 3] = -1;
+			map[3 * y + 1][x * 6 + 4] = -1;
+			map[3 * y + 1][x * 6 + 7] = 0;
+			map[3 * y + 1][x * 6 + 8] = 0;
+			map[3 * y + 1][x * 6 + 9] = 0;
+			map[3 * y + 1][x * 6 + 10] = 0;
+		}
+		else {
+			map[3 * y + 1][x * 6 + 1] = 20;
+			map[3 * y + 1][x * 6 + 2] = -1;
+			map[3 * y + 1][x * 6 + 3] = -1;
+			map[3 * y + 1][x * 6 + 4] = -1;
+		}
 	}
 }
 

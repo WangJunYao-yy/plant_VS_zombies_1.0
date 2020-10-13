@@ -32,7 +32,7 @@ Bullet::Bullet(int speed_, int attack_, int x_, int y_) {
 }
 
 void Bullet::change_loc() {
-	if (loc <= 4) {
+	if (loc < 4) {
 		loc++;
 	}
 	else {

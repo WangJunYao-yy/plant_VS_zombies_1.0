@@ -23,7 +23,39 @@ double start;
 
 vector <Plant> Peashooter;
 vector <Bullet> bullet;
+vector <Zombie> zombie;
 
+
+void move_zombies() {
+	int y = rand() % 3;
+	char* name = new char[100];
+	strcpy(name, "普通僵尸");
+	Zombie tmp(name, 100, 20, 20, y);
+	zombie.push_back(tmp);
+
+	for (int i = 0; i < zombie.size(); i++) {
+		if (zombie[i].get_life() > 0) {
+			gameover = zombie[i].Is_gameover();
+			if (gameover) {
+				system("cls");
+				initgraph(640, 480);
+
+				loadimage(NULL, _T(".\\graph\\gameover.jpg"), 550, 450, true);
+				// 按任意键退出
+				_getch();
+				closegraph();
+				return;
+			}
+			else {
+				zombie[i].change_loc();
+				Map::change_map(zombie[i].get_loc_x(), zombie[i].get_loc_y(), 20);
+			}
+		}
+		else {
+			zombie.erase(zombie.begin() + i, zombie.begin() + i + 1);
+		}
+	}
+}
 
 
 void print_begin_surface() {
@@ -47,6 +79,7 @@ void print_play_ui() {
 			if (map[i][j] == 2)cout << "\033[31m# \033[0m";
 			if (map[i][j] == 3)cout << "豌豆射手";
 			if (map[i][j] == 10)cout << "·";
+			if (map[i][j] == 20)cout << "普通僵尸";
 		}
 		cout << endl;
 	}
@@ -58,6 +91,7 @@ void print_play_ui() {
 			if (map[i][j] == 2)cout << "\033[31m# \033[0m";
 			if (map[i][j] == 3)cout << "豌豆射手";
 			if (map[i][j] == 10)cout << "·";
+			if (map[i][j] == 20)cout << "普通僵尸";
 
 
 		}
@@ -71,7 +105,7 @@ void print_play_ui() {
 			if (map[i][j] == 2)cout << "\033[31m# \033[0m";
 			if (map[i][j] == 3)cout << "豌豆射手";
 			if (map[i][j] == 10)cout << "·";
-
+			if (map[i][j] == 20)cout << "普通僵尸";
 
 		}
 		cout << endl;
@@ -149,12 +183,19 @@ int control() {
 		}
 		if (i % 2 == 0) {
 			for (int i = 0; i < bullet.size(); i++) {
-				if (bullet[i].get_loc_x() == 7 && bullet[i].get_loc() == 4) {
+				if (bullet[i].get_loc_x() == 8) {
 					bullet.erase(bullet.begin() + i, bullet.begin() + i + 1);
 					continue;
 				}
 				Map::change_map(bullet[i].get_loc_x(), bullet[i].get_loc_y(), bullet[i].get_loc() + 10);
 				bullet[i].change_loc();
+			}
+		}
+		if (i % 5 == 0) {
+			move_zombies();
+			if (gameover) {
+				system("cls");
+				return 0;
 			}
 		}
 		print_game_ui();
@@ -256,13 +297,16 @@ Plant buy_plant() {
 					}
 					if (i % 2 == 0) {
 						for (int i = 0; i < bullet.size(); i++) {
-							if (bullet[i].get_loc_x() == 7 && bullet[i].get_loc() == 4) {
+							if (bullet[i].get_loc_x() == 8) {
 								bullet.erase(bullet.begin() + i, bullet.begin() + i + 1);
 								continue;
 							}
 							Map::change_map(bullet[i].get_loc_x(), bullet[i].get_loc_y(), bullet[i].get_loc() + 10);
 							bullet[i].change_loc();
 						}
+					}
+					if (i % 20 == 0) {
+						move_zombies();
 					}
 
 					print_buy_ui();
@@ -294,13 +338,16 @@ Plant buy_plant() {
 		}
 		if (j % 2 == 0) {
 			for (int i = 0; i < bullet.size(); i++) {
-				if (bullet[i].get_loc_x() == 7 && bullet[i].get_loc() == 4) {
+				if (bullet[i].get_loc_x() == 8) {
 					bullet.erase(bullet.begin() + i, bullet.begin() + i + 1);
 					continue;
 				}
 				Map::change_map(bullet[i].get_loc_x(), bullet[i].get_loc_y(), bullet[i].get_loc() + 10);
 				bullet[i].change_loc();
 			}
+		}
+		if (j % 20 == 0) {
+			move_zombies();
 		}
 		print_buy_ui();
 	}
